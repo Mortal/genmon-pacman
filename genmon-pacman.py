@@ -6,6 +6,14 @@ import subprocess
 
 
 def test():
+    """
+    >>> test()  # doctest:+ELLIPSIS
+    <txt>105</txt>
+    <tool>Need to upgrade 105 packages; 59.8 MB to download.
+    <BLANKLINE>
+    accountsservice, ..., xkeyboard-config</tool>
+    """
+
     pkgs = """
         openssl libldap krb5 accountsservice apr-util apache avahi binutils
         gnutls libdatrie libthai gtk2 libssh2 curl libetpan sqlite claws-mail
