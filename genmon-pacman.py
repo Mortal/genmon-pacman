@@ -43,6 +43,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--no-update',
                         dest='update', action='store_false')
+    parser.add_argument('-l', '--max-lines', type=int, default=None)
+    parser.add_argument('-w', '--width', type=int, default=59)
     args = parser.parse_args()
 
     if args.update:
@@ -58,7 +60,7 @@ def main():
         if line.startswith("PKG "):
             name, size = line.split()[1:]
             pkgs.append((name, int(size)))
-    print_status(pkgs)
+    print_status(pkgs, max_lines=args.max_lines, width=args.width)
 
 
 def join_prefixes(names):
@@ -83,11 +85,14 @@ def join_prefixes(names):
             yield from group
 
 
-def print_status(pkgs):
+def print_status(pkgs, max_lines=None, width=59):
     print("<txt>%d</txt>" % len(pkgs))
     names = join_prefixes(n for n, s in pkgs)
     pkgs_str = textwrap.wrap(', '.join(names),
-                             break_on_hyphens=False, width=55)
+                             break_on_hyphens=False, width=width)
+    if max_lines is not None and len(pkgs_str) + 2 > max_lines:
+        pkgs_str = pkgs_str[:max_lines - 2]
+        pkgs_str[-1] += ' ...'
     print("<tool>Need to upgrade %d packages; " % len(pkgs) +
           "%.1f MB to download.\n\n" % (sum(s for n, s in pkgs) / 1024**2) +
           "%s</tool>" % '\n'.join(pkgs_str))
