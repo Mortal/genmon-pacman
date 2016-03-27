@@ -2,6 +2,7 @@
 
 import argparse
 import textwrap
+import itertools
 import subprocess
 
 
@@ -60,9 +61,32 @@ def main():
     print_status(pkgs)
 
 
+def join_prefixes(names):
+    def get_prefix(n):
+        try:
+            return n[:n.index('-')+1]
+        except ValueError:
+            if n.startswith('lib'):
+                return 'lib'
+            return n
+
+    groups = itertools.groupby(sorted(names, key=get_prefix), key=get_prefix)
+
+    for prefix, group in groups:
+        group = sorted(group)
+        if len(group) > 1:
+            group = [n[len(prefix):] for n in group]
+            group[0] = '%s{%s' % (prefix, group[0])
+            group[-1] += '}'
+            yield from group
+        else:
+            yield from group
+
+
 def print_status(pkgs):
     print("<txt>%d</txt>" % len(pkgs))
-    pkgs_str = textwrap.wrap(', '.join(sorted(n for n, s in pkgs)),
+    names = join_prefixes(n for n, s in pkgs)
+    pkgs_str = textwrap.wrap(', '.join(names),
                              break_on_hyphens=False, width=55)
     print("<tool>Need to upgrade %d packages; " % len(pkgs) +
           "%.1f MB to download.\n\n" % (sum(s for n, s in pkgs) / 1024**2) +
