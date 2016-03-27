@@ -40,11 +40,14 @@ def test():
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--no-update',
+                        dest='update', action='store_false')
     args = parser.parse_args()
 
-    subprocess.call(
-        ('sudo', '-n', 'pacman', '-Sy'),
-        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    if args.update:
+        subprocess.call(
+            ('sudo', '-n', 'pacman', '-Sy'),
+            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
     output = subprocess.check_output(
         ('pacman', '-Sup', '--print-format', 'PKG %n %s'),
         universal_newlines=True)
