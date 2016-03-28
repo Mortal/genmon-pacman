@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import argparse
 import textwrap
 import itertools
@@ -47,13 +48,31 @@ def main():
     parser.add_argument('-w', '--width', type=int, default=59)
     args = parser.parse_args()
 
-    if args.update:
-        subprocess.call(
-            ('sudo', '-n', 'pacman', '-Sy'),
-            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-    output = subprocess.check_output(
-        ('pacman', '-Sup', '--print-format', 'PKG %n %s'),
-        universal_newlines=True)
+    d = '/tmp/checkup-db/'
+    lock = d + 'db.lck'
+    try:
+        if not os.path.exists(d):
+            os.mkdir(d)
+            os.symlink('/var/lib/pacman/local', d + 'local')
+        if args.update:
+            subprocess.call(
+                ('fakeroot', '--', 'pacman', '-Sy',
+                 '--dbpath', d, '--logfile', '/dev/null'),
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL)
+        else:
+            subprocess.call(
+                ('rsync', '-aqu', '/var/lib/pacman/sync/', d + 'sync/'))
+        output = subprocess.check_output(
+            ('pacman', '-Sup', '--print-format', 'PKG %n %s',
+             '--dbpath', d, '--logfile', '/dev/null'),
+            universal_newlines=True)
+    finally:
+        try:
+            os.unlink(lock)
+        except:
+            pass
 
     pkgs = []
     for line in output.splitlines():
