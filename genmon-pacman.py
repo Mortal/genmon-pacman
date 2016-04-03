@@ -15,7 +15,7 @@ def test():
     <txt>105</txt>
     <tool>Need to upgrade 105 packages; 59.8 MB to download.
     <BLANKLINE>
-    accountsservice, ..., xkeyboard-config</tool>
+    accountsservice, ...xkeyboard-config</tool>
     """
 
     pkgs = """
