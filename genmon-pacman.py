@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import shlex
 import argparse
 import textwrap
 import itertools
@@ -46,6 +47,14 @@ def main():
                         dest='update', action='store_false')
     parser.add_argument('-l', '--max-lines', type=int, default=None)
     parser.add_argument('-w', '--width', type=int, default=59)
+    parser.add_argument('--terminal',
+                        dest='terminal', default='gnome-terminal')
+    parser.add_argument('--no-terminal',
+                        dest='terminal', action='store_const', const=None)
+    parser.add_argument('--icons',
+                        default='/usr/share/icons/gnome/24x24/status')
+    parser.add_argument('--icon',
+                        default='software-update-available.png')
     args = parser.parse_args()
 
     d = '/tmp/checkup-db/'
@@ -80,6 +89,13 @@ def main():
             name, size = line.split()[1:]
             pkgs.append((name, int(size)))
     print_status(pkgs, max_lines=args.max_lines, width=args.width)
+    if args.terminal is not None and pkgs:
+        print("<img>%s/%s</img>" %
+              (args.icons, args.icon))
+        print("<click>%s -e %s</click>" %
+              (shlex.quote(args.terminal),
+               shlex.quote('sudo pacman -Syu')))
+
 
 
 def join_prefixes(names):
