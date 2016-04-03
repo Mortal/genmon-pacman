@@ -3,6 +3,7 @@
 import os
 import shlex
 import argparse
+import datetime
 import textwrap
 import itertools
 import subprocess
@@ -122,6 +123,11 @@ def join_prefixes(names):
 
 def print_status(pkgs, max_lines=None, width=59):
     print("<txt>%d</txt>" % len(pkgs))
+    if not pkgs:
+        dt = datetime.datetime.now()
+        dt = dt.strftime("%Y-%m-%d %H:%M")
+        print("<tool>No updates available\nLast checked on %s</tool>" % dt)
+        return
     names = join_prefixes(n for n, s in pkgs)
     pkgs_str = textwrap.wrap(', '.join(names),
                              break_on_hyphens=False, width=width)
