@@ -99,6 +99,19 @@ def main():
 
 
 def get_prefix(n):
+    """
+    Compute the name prefix under which to group packages.
+
+    >>> get_prefix("lib32-qt4")
+    'lib32-'
+    >>> get_prefix("libevent")
+    'lib'
+    >>> get_prefix("transmission-qt")
+    'transmission-'
+    >>> get_prefix("unbound")
+    'unbound'
+    """
+
     try:
         return n[:n.index('-')+1]
     except ValueError:
@@ -108,6 +121,16 @@ def get_prefix(n):
 
 
 def join_prefixes(names):
+    """
+    Join package names according to get_prefix.
+
+    >>> ' '.join(join_prefixes('lib32-curl qt4 lib32-qt4 libevent'.split()))
+    'libevent lib32-{curl qt4} qt4'
+    >>> ' '.join(join_prefixes('python2-dbus python2-eyed3 '
+    ...                        'qt5-base qt5-tools'.split()))
+    'python2-{dbus eyed3} qt5-{base tools}'
+    """
+
     groups = itertools.groupby(sorted(names, key=get_prefix), key=get_prefix)
 
     for prefix, group in groups:
