@@ -98,16 +98,16 @@ def main():
                shlex.quote('sudo pacman -Syu')))
 
 
+def get_prefix(n):
+    try:
+        return n[:n.index('-')+1]
+    except ValueError:
+        if n.startswith('lib'):
+            return 'lib'
+        return n
+
 
 def join_prefixes(names):
-    def get_prefix(n):
-        try:
-            return n[:n.index('-')+1]
-        except ValueError:
-            if n.startswith('lib'):
-                return 'lib'
-            return n
-
     groups = itertools.groupby(sorted(names, key=get_prefix), key=get_prefix)
 
     for prefix, group in groups:
