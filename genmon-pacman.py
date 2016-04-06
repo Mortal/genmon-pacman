@@ -121,6 +121,13 @@ def join_prefixes(names):
             yield from group
 
 
+def pluralize(n, w):
+    if n == 1:
+        return "%s %s" % (n, w)
+    else:
+        return "%s %ss" % (n, w)
+
+
 def print_status(pkgs, max_lines=None, width=59):
     print("<txt>%d</txt>" % len(pkgs))
     if not pkgs:
@@ -134,7 +141,7 @@ def print_status(pkgs, max_lines=None, width=59):
     if max_lines is not None and len(pkgs_str) + 2 > max_lines:
         pkgs_str = pkgs_str[:max_lines - 2]
         pkgs_str[-1] += ' ...'
-    print("<tool>Need to upgrade %d packages; " % len(pkgs) +
+    print("<tool>Need to upgrade %s; " % pluralize(len(pkgs), 'package') +
           "%.1f MB to download.\n\n" % (sum(s for n, s in pkgs) / 1024**2) +
           "%s</tool>" % '\n'.join(pkgs_str))
 
