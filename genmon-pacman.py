@@ -122,6 +122,14 @@ def join_prefixes(names):
 
 
 def pluralize(n, w):
+    """
+    >>> pluralize(0, 'package')
+    '0 packages'
+    >>> pluralize(1, 'package')
+    '1 package'
+    >>> pluralize(2, 'package')
+    '2 packages'
+    """
     if n == 1:
         return "%s %s" % (n, w)
     else:
