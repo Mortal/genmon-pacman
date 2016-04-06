@@ -137,6 +137,8 @@ def pluralize(n, w):
 
 
 def print_status(pkgs, max_lines=None, width=59):
+    if max_lines is not None and max_lines < 3:
+        raise ValueError("max_lines must be at least 3")
     print("<txt>%d</txt>" % len(pkgs))
     if not pkgs:
         dt = datetime.datetime.now()
