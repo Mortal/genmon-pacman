@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import glob
 import shlex
 import argparse
 import datetime
@@ -31,6 +32,10 @@ def main():
         if not os.path.exists(d):
             os.makedirs(d)
             os.symlink('/var/lib/pacman/local', d + 'local')
+        subprocess.call(
+            ['rsync', '-aqu'] +
+            glob.glob('/var/lib/pacman/sync/*.db') +
+            [d + 'sync/'])
         if args.update:
             subprocess.call(
                 ('fakeroot', '--', 'pacman', '-Sy',
@@ -38,9 +43,6 @@ def main():
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL)
-        else:
-            subprocess.call(
-                ('rsync', '-aqu', '/var/lib/pacman/sync/', d + 'sync/'))
         try:
             output = subprocess.check_output(
                 ('pacman', '-Sup', '--print-format', 'PKG %n %s',
