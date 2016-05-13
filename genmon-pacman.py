@@ -29,7 +29,7 @@ def main():
     lock = d + 'db.lck'
     try:
         if not os.path.exists(d):
-            os.mkdir(d)
+            os.makedirs(d)
             os.symlink('/var/lib/pacman/local', d + 'local')
         if args.update:
             subprocess.call(
