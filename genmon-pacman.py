@@ -41,10 +41,19 @@ def main():
         else:
             subprocess.call(
                 ('rsync', '-aqu', '/var/lib/pacman/sync/', d + 'sync/'))
-        output = subprocess.check_output(
-            ('pacman', '-Sup', '--print-format', 'PKG %n %s',
-             '--dbpath', d, '--logfile', '/dev/null'),
-            universal_newlines=True)
+        try:
+            output = subprocess.check_output(
+                ('pacman', '-Sup', '--print-format', 'PKG %n %s',
+                 '--dbpath', d, '--logfile', '/dev/null'),
+                universal_newlines=True)
+        except subprocess.CalledProcessError:
+            # Maybe a package has been replaced with another package,
+            # making -Sup fail since the user has to accept a package
+            # replacement. Run with -d to disable dependency checks.
+            output = subprocess.check_output(
+                ('pacman', '-Sdup', '--print-format', 'PKG %n %s',
+                 '--dbpath', d, '--logfile', '/dev/null'),
+                universal_newlines=True)
     finally:
         try:
             os.unlink(lock)
