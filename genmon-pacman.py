@@ -73,7 +73,7 @@ def main():
               (args.icons, args.icon))
         print("<click>%s -e %s</click>" %
               (shlex.quote(args.terminal),
-               shlex.quote('sudo pacman -Syu')))
+               shlex.quote('sudo pacman -Syu ; sleep 5')))
 
 
 def get_prefix(n):
