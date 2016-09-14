@@ -72,6 +72,12 @@ def main():
         print("<img>%s/%s</img>" %
               (args.icons, args.icon))
         command_line = 'sudo pacman -Syu ; sleep 5'
+        # Some terminals, e.g. xfce4-terminal, perform their own crude parsing
+        # of the argument to -e, e.g. with g_shell_parse_argv.
+        # This crude parsing supports quoted arguments but not semicolons
+        # to separate commands. Pass the command to /bin/sh instead to make
+        # sure that it runs correctly.
+        command_line = '/bin/sh -c ' + shlex.quote(command_line)
         print("<click>%s -e %s</click>" %
               (shlex.quote(args.terminal),
                shlex.quote(command_line)))
