@@ -71,9 +71,10 @@ def main():
     if args.terminal is not None and pkgs:
         print("<img>%s/%s</img>" %
               (args.icons, args.icon))
+        command_line = 'sudo pacman -Syu ; sleep 5'
         print("<click>%s -e %s</click>" %
               (shlex.quote(args.terminal),
-               shlex.quote('sudo pacman -Syu ; sleep 5')))
+               shlex.quote(command_line)))
 
 
 def get_prefix(n):
